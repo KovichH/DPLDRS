@@ -1143,7 +1143,12 @@
         async function performSearch() {
             const query = searchInput.value.trim();
 
+            console.log('=== INICIO DE BÚSQUEDA ===');
+            console.log('Query:', query);
+            console.log('Empleado:', employeeNumber);
+
             if (!employeeNumber || employeeNumber.trim() === '') {
+                console.log('❌ Sin número de empleado');
                 employeeInput.focus();
                 employeeInput.style.borderColor = 'var(--danger)';
                 setTimeout(() => {
@@ -1153,11 +1158,13 @@
             }
 
             if (!query) {
+                console.log('❌ Sin query de búsqueda');
                 searchInput.focus();
                 return;
             }
 
             if (searchCount >= MAX_SEARCHES) {
+                console.log('❌ Límite de búsquedas alcanzado');
                 showBlocked();
                 return;
             }
@@ -1176,19 +1183,27 @@
             try {
                 const url = `${API_URL}?q=${encodeURIComponent(query)}&emp=${encodeURIComponent(employeeNumber)}`;
                 
-                console.log('Iniciando búsqueda...', url);
+                console.log('📡 Iniciando búsqueda...');
+                console.log('URL completa:', url);
                 
                 // Usar JSONP directamente (más confiable en móviles que fetch)
                 const data = await fetchJSONP(url);
 
+                console.log('✅ Respuesta recibida:', data);
+
                 hideAllStates();
 
                 if (data.error) {
+                    console.log('⚠️ Respuesta con error:', data.error);
+                    
                     if (data.error === 'RATE_LIMIT') {
+                        console.log('→ Mostrando bloqueo por límite');
                         showBlocked();
                     } else if (data.error === 'NOT_FOUND') {
+                        console.log('→ Mostrando no encontrado');
                         noResults.classList.add('visible');
                     } else if (data.error === 'UNAUTHORIZED_EMPLOYEE') {
+                        console.log('→ Empleado no autorizado');
                         localStorage.removeItem('dipladeurs_employee');
                         employeeNumber = null;
                         employeeInput.disabled = false;
@@ -1198,12 +1213,14 @@
                         document.getElementById('errorText').textContent = 'Número de empleado no autorizado. Contacta a tu supervisor.';
                         errorMessage.classList.add('visible');
                     } else {
+                        console.log('→ Error genérico:', data.message);
                         document.getElementById('errorText').textContent = data.message || data.error;
                         errorMessage.classList.add('visible');
                     }
                     return;
                 }
 
+                console.log('✅ Datos válidos, mostrando resultado');
                 displayResult(data);
 
                 if (searchCount >= MAX_SEARCHES) {
@@ -1213,14 +1230,18 @@
                 }
 
             } catch (error) {
-                console.error('Error completo:', error);
+                console.error('❌ ERROR CAPTURADO:', error);
+                console.error('Tipo de error:', error.constructor.name);
+                console.error('Mensaje:', error.message);
+                console.error('Stack:', error.stack);
+                
                 hideAllStates();
                 
                 // Mensaje de error más específico según el tipo
                 let errorMsg = 'Error de conexión. ';
                 if (error.message.includes('Timeout')) {
                     errorMsg += 'La conexión es muy lenta. Intenta conectarte a WiFi o espera mejor señal.';
-                } else if (error.message.includes('red')) {
+                } else if (error.message.includes('red') || error.message.includes('script')) {
                     errorMsg += 'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
                 } else {
                     errorMsg += 'Verifica tu internet e intenta de nuevo.';
@@ -1229,6 +1250,8 @@
                 document.getElementById('errorText').textContent = errorMsg;
                 errorMessage.classList.add('visible');
             }
+            
+            console.log('=== FIN DE BÚSQUEDA ===');
         }
 
         function displayResult(data) {
@@ -1246,10 +1269,13 @@
             const documentContainer = document.getElementById('documentContainer');
             const blockDigital = document.getElementById('blockDigital');
 
-            if (data.digital && data.digital.trim() !== '') {
+            // Convertir digital a string de manera segura
+            const digitalValue = String(data.digital || '').trim();
+            
+            if (digitalValue !== '') {
                 blockDigital.style.display = 'block';
                 documentContainer.innerHTML = `
-                    <a href="${data.digital}" target="_blank" rel="noopener noreferrer" class="document-link">
+                    <a href="${digitalValue}" target="_blank" rel="noopener noreferrer" class="document-link">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
                             <polyline points="15 3 21 3 21 9"/>
