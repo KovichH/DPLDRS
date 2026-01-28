@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIPLADEURS - Verificación de Permisos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --guinda-dark: #722F37;
+            --guinda-medium: #8B3A44;
+            --guinda-light: #A34450;
+            --guinda-subtle: rgba(114, 47, 55, 0.08);
+            --black: #1A1A1A;
+            --gray-900: #2D2D2D;
+            --gray-700: #4A4A4A;
+            --gray-500: #6B6B6B;
+            --gray-400: #8A8A8A;
+            --gray-300: #B0B0B0;
+            --gray-200: #D4D4D4;
+            --gray-100: #EBEBEB;
+            --gray-50: #F5F5F5;
+            --white: #FFFFFF;
+            --success: #2E7D4A;
+            --success-bg: #E8F5ED;
+            --warning: #B8860B;
+            --warning-bg: #FEF9E7;
+            --danger: #C0392B;
+            --danger-bg: #FDEDEC;
+            --info: #2874A6;
+            --info-bg: #EBF5FB;
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --radius-md: 6px;
+            --radius-lg: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+            color: var(--black);
+            font-size: 14px;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: linear-gradient(135deg, var(--guinda-dark) 0%, var(--guinda-medium) 100%);
+            color: var(--white);
+            padding: 20px 24px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .logo-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: var(--white);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo svg {
+            width: 26px;
+            height: 26px;
+            color: var(--guinda-dark);
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .header-subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 20px;
+        }
+
+        .search-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 650px;
+            overflow: hidden;
+        }
+
+        /* ===== EMPLOYEE SECTION ===== */
+        .employee-section {
+            padding: 20px 24px;
+            background: var(--guinda-subtle);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .employee-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .employee-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--guinda-dark);
+            white-space: nowrap;
+        }
+
+        .employee-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-family: 'IBM Plex Mono', monospace;
+            transition: all 0.2s;
+            max-width: 200px;
+        }
+
+        .employee-input:focus {
+            outline: none;
+            border-color: var(--guinda-dark);
+            box-shadow: 0 0 0 3px var(--guinda-subtle);
+        }
+
+        .employee-input:disabled {
+            background: var(--gray-100);
+        }
+
+        .employee-saved {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--success);
+        }
+
+        .employee-saved svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .employee-change {
+            font-size: 12px;
+            color: var(--guinda-dark);
+            cursor: pointer;
+            text-decoration: underline;
+            margin-left: auto;
+        }
+
+        .employee-change:hover {
+            color: var(--guinda-medium);
+        }
+
+        /* ===== SEARCH SECTION ===== */
+        .search-section {
+            padding: 24px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .search-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .search-hint {
+            font-size: 12px;
+            color: var(--gray-400);
+            margin-bottom: 12px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 14px 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--guinda-dark);
+            box-shadow: 0 0 0 3px var(--guinda-subtle);
+        }
+
+        .search-input::placeholder {
+            color: var(--gray-400);
+        }
+
+        .search-input:disabled {
+            background: var(--gray-100);
+            cursor: not-allowed;
+        }
+
+        .search-btn {
+            padding: 14px 24px;
+            background: var(--guinda-dark);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-btn:hover:not(:disabled) {
+            background: var(--guinda-medium);
+        }
+
+        .search-btn:disabled {
+            background: var(--gray-300);
+            cursor: not-allowed;
+        }
+
+        .search-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ===== RATE LIMIT INDICATOR ===== */
+        .rate-limit-section {
+            padding: 16px 24px;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .rate-limit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .rate-limit-label {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        .rate-limit-count {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-700);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .rate-limit-bar {
+            height: 6px;
+            background: var(--gray-200);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .rate-limit-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 3px;
+            transition: width 0.3s, background 0.3s;
+        }
+
+        .rate-limit-fill.warning {
+            background: var(--warning);
+        }
+
+        .rate-limit-fill.danger {
+            background: var(--danger);
+        }
+
+        .rate-limit-timer {
+            margin-top: 8px;
+            font-size: 11px;
+            color: var(--gray-400);
+            text-align: center;
+            display: none;
+        }
+
+        .rate-limit-timer.visible {
+            display: block;
+        }
+
+        /* ===== RESULTS SECTION ===== */
+        .results-section {
+            padding: 24px;
+            min-height: 200px;
+        }
+
+        .results-placeholder {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-400);
+        }
+
+        .results-placeholder svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .results-placeholder p {
+            font-size: 14px;
+        }
+
+        /* ===== RESULT CARD ===== */
+        .result-card {
+            display: none;
+        }
+
+        .result-card.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .result-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--guinda-dark);
+        }
+
+        .result-subtitle {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+
+        .result-fecha {
+            background: var(--gray-100);
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray-700);
+            white-space: nowrap;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .result-block {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 16px;
+        }
+
+        .result-block.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .result-block-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--guinda-dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .result-block-title svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .result-field {
+            margin-bottom: 10px;
+        }
+
+        .result-field:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-field.hidden {
+            display: none;
+        }
+
+        .result-label {
+            font-size: 11px;
+            color: var(--gray-500);
+            margin-bottom: 2px;
+        }
+
+        .result-value {
+            font-size: 14px;
+            color: var(--black);
+        }
+
+        .result-value.empty {
+            display: none;
+        }
+
+        /* ===== DOCUMENT LINK ===== */
+        .document-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--guinda-dark);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+
+        .document-link:hover {
+            background: var(--guinda-medium);
+        }
+
+        .document-link svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .no-document {
+            color: var(--gray-400);
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        /* ===== BLOCKED STATE ===== */
+        .blocked-message {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .blocked-message.visible {
+            display: block;
+        }
+
+        .blocked-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--danger-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .blocked-icon svg {
+            width: 32px;
+            height: 32px;
+            color: var(--danger);
+        }
+
+        .blocked-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--danger);
+            margin-bottom: 8px;
+        }
+
+        .blocked-text {
+            font-size: 14px;
+            color: var(--gray-600);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .blocked-timer {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--guinda-dark);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        /* ===== LOADING STATE ===== */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .loading.visible {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--guinda-dark);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            color: var(--gray-500);
+        }
+
+        /* ===== ERROR STATE ===== */
+        .error-message {
+            display: none;
+            text-align: center;
+            padding: 24px;
+            background: var(--danger-bg);
+            border-radius: var(--radius-md);
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        .error-message p {
+            color: var(--danger);
+            font-weight: 500;
+        }
+
+        /* ===== NO RESULTS ===== */
+        .no-results {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .no-results.visible {
+            display: block;
+        }
+
+        .no-results-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--warning-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .no-results-icon svg {
+            width: 32px;
+            height: 32px;
+            color: var(--warning);
+        }
+
+        .no-results-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+
+        .no-results-text {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 16px;
+            font-size: 11px;
+            color: var(--gray-400);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .search-box {
+                flex-direction: column;
+            }
+
+            .search-btn {
+                justify-content: center;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .result-fecha {
+                align-self: flex-start;
+            }
+
+            .employee-row {
+                flex-wrap: wrap;
+            }
+
+            .employee-input {
+                max-width: 100%;
+                flex: 1 1 100%;
+            }
+
+            .employee-change {
+                margin-left: 0;
+                margin-top: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-row">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <h1>DIPLADEURS</h1>
+            </div>
+            <p class="header-subtitle">Sistema de Verificación de Permisos</p>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <div class="search-card">
+            <!-- Employee Section -->
+            <div class="employee-section">
+                <div class="employee-row">
+                    <label class="employee-label">No. Empleado:</label>
+                    <input type="text" class="employee-input" id="employeeInput" placeholder="Ej: 12345" maxlength="20">
+                    <span class="employee-saved" id="employeeSaved" style="display: none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 13l4 4L19 7" />
+                        </svg>
+                        Guardado
+                    </span>
+                    <span class="employee-change" id="employeeChange" style="display: none;"
+                        onclick="changeEmployee()">Cambiar</span>
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-section">
+                <label class="search-label">Buscar registro:</label>
+                <p class="search-hint">Ingresa la Clave/Oficio o el Número de Recibo</p>
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput"
+                        placeholder="Ej: AL/H-0008-E/24, 99T000000..." autocomplete="off">
+                    <button class="search-btn" id="searchBtn" onclick="performSearch()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="M21 21l-4.35-4.35" />
+                        </svg>
+                        Buscar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Rate Limit Indicator -->
+            <div class="rate-limit-section">
+                <div class="rate-limit-header">
+                    <span class="rate-limit-label">Consultas disponibles</span>
+                    <span class="rate-limit-count"><span id="remainingCount">5</span> de 5</span>
+                </div>
+                <div class="rate-limit-bar">
+                    <div class="rate-limit-fill" id="rateLimitFill" style="width: 100%"></div>
+                </div>
+                <div class="rate-limit-timer" id="rateLimitTimer">
+                    Se reinician en: <span id="timerDisplay">22:00</span>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <!-- Placeholder -->
+                <div class="results-placeholder" id="placeholder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <p>Ingresa una Clave/Oficio o Número de Recibo para verificar el estado del trámite</p>
+                </div>
+
+                <!-- Loading -->
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Buscando...</p>
+                </div>
+
+                <!-- Error Message -->
+                <div class="error-message" id="errorMessage">
+                    <p id="errorText">Error de conexión. Intenta de nuevo.</p>
+                </div>
+
+                <!-- No Results -->
+                <div class="no-results" id="noResults">
+                    <div class="no-results-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <p class="no-results-title">Sin resultados</p>
+                    <p class="no-results-text">No se encontró ningún registro con esa Clave/Oficio o Número de Recibo.
+                        Verifica los datos e intenta de nuevo.</p>
+                </div>
+
+                <!-- Blocked Message -->
+                <div class="blocked-message" id="blockedMessage">
+                    <div class="blocked-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <p class="blocked-title">Límite de consultas alcanzado</p>
+                    <p class="blocked-text">Por seguridad, solo puedes realizar 5 búsquedas cada 22 minutos.<br>Si
+                        necesitas más consultas, contacta a tu supervisor.</p>
+                    <p class="blocked-timer" id="blockedTimer">22:00</p>
+                </div>
+
+                <!-- Result Card -->
+                <div class="result-card" id="resultCard">
+                    <div class="result-header">
+                        <div>
+                            <h2 class="result-title" id="resultTramite">-</h2>
+                            <p class="result-subtitle" id="resultClaveOficio">-</p>
+                        </div>
+                        <span class="result-fecha" id="resultFecha">-</span>
+                    </div>
+
+                    <div class="result-grid">
+                        <!-- Identificación Block -->
+                        <div class="result-block">
+                            <div class="result-block-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                                </svg>
+                                Identificación
+                            </div>
+                            <div class="result-field" id="fieldNumRecibo">
+                                <div class="result-label">Núm. Recibo</div>
+                                <div class="result-value" id="resultNumRecibo">-</div>
+                            </div>
+                            <div class="result-field" id="fieldNoFolio">
+                                <div class="result-label">No. Folio</div>
+                                <div class="result-value" id="resultNoFolio">-</div>
+                            </div>
+                        </div>
+
+                        <!-- Ubicación Block -->
+                        <div class="result-block">
+                            <div class="result-block-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Ubicación
+                            </div>
+                            <div class="result-field" id="fieldDomicilio">
+                                <div class="result-label">Domicilio del Predio</div>
+                                <div class="result-value" id="resultDomicilio">-</div>
+                            </div>
+                            <div class="result-field" id="fieldColonia">
+                                <div class="result-label">Colonia</div>
+                                <div class="result-value" id="resultColonia">-</div>
+                            </div>
+                        </div>
+
+                        <!-- Personas Block -->
+                        <div class="result-block full-width">
+                            <div class="result-block-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                    <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+                                </svg>
+                                Personas
+                            </div>
+                            <div class="result-grid" style="gap: 12px;">
+                                <div class="result-field" id="fieldPropietario">
+                                    <div class="result-label">Propietario</div>
+                                    <div class="result-value" id="resultPropietario">-</div>
+                                </div>
+                                <div class="result-field" id="fieldPromovente">
+                                    <div class="result-label">Promovente</div>
+                                    <div class="result-value" id="resultPromovente">-</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Documento Digital Block -->
+                        <div class="result-block full-width" id="blockDigital">
+                            <div class="result-block-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                    <polyline points="14 2 14 8 20 8" />
+                                    <line x1="16" y1="13" x2="8" y2="13" />
+                                    <line x1="16" y1="17" x2="8" y2="17" />
+                                    <polyline points="10 9 9 9 8 9" />
+                                </svg>
+                                Documento Digital
+                            </div>
+                            <div id="documentContainer">
+                                <!-- Se llena dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        DIPLADEURS - Dirección General de Planeación y Desarrollo Urbano Sustentable.<br>
+        Dirección de Inspección y Vigilancia.<br>
+        <br>
+        Sistema exclusivo para uso interno.<br>
+        La información aquí contenida es confidencial y está protegida por la legislación vigente.<br>
+        Cualquier intento de acceso no autorizado será reportado y sancionado conforme a la ley.
+    </footer>
+
+    <script>
+        // =====================================================
+        // CONFIGURACIÓN
+        // =====================================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzCehRhZlVESXXbwtAJtn2quRrZCTXDMo0TNVo3wNSXT7BFn_zfs-kQGhwirfyHrgsW/exec';
+        
+        const MAX_SEARCHES = 5;
+        const COOLDOWN_MS = 22 * 60 * 1000;
+
+        // State
+        let searchCount = 0;
+        let cooldownStart = null;
+        let cooldownInterval = null;
+        let employeeNumber = null;
+
+        // DOM Elements
+        const employeeInput = document.getElementById('employeeInput');
+        const employeeSaved = document.getElementById('employeeSaved');
+        const employeeChange = document.getElementById('employeeChange');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const remainingCount = document.getElementById('remainingCount');
+        const rateLimitFill = document.getElementById('rateLimitFill');
+        const rateLimitTimer = document.getElementById('rateLimitTimer');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const placeholder = document.getElementById('placeholder');
+        const loading = document.getElementById('loading');
+        const errorMessage = document.getElementById('errorMessage');
+        const noResults = document.getElementById('noResults');
+        const blockedMessage = document.getElementById('blockedMessage');
+        const blockedTimer = document.getElementById('blockedTimer');
+        const resultCard = document.getElementById('resultCard');
+
+        // ===== EMPLOYEE FUNCTIONS =====
+        function initEmployee() {
+            const stored = localStorage.getItem('dipladeurs_employee');
+            if (stored) {
+                employeeNumber = stored;
+                employeeInput.value = stored;
+                employeeInput.disabled = true;
+                employeeSaved.style.display = 'flex';
+                employeeChange.style.display = 'inline';
+            }
+        }
+
+        function saveEmployee() {
+            const value = employeeInput.value.trim();
+            if (value) {
+                employeeNumber = value;
+                localStorage.setItem('dipladeurs_employee', value);
+                employeeInput.disabled = true;
+                employeeSaved.style.display = 'flex';
+                employeeChange.style.display = 'inline';
+            }
+        }
+
+        function changeEmployee() {
+            employeeInput.disabled = false;
+            employeeInput.focus();
+            employeeSaved.style.display = 'none';
+            employeeChange.style.display = 'none';
+            employeeNumber = null;
+        }
+
+        employeeInput.addEventListener('blur', saveEmployee);
+        employeeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                saveEmployee();
+                searchInput.focus();
+            }
+        });
+
+        // ===== RATE LIMIT FUNCTIONS =====
+        function initRateLimit() {
+            const stored = localStorage.getItem('dipladeurs_ratelimit');
+            if (stored) {
+                const data = JSON.parse(stored);
+                const elapsed = Date.now() - data.cooldownStart;
+
+                if (elapsed < COOLDOWN_MS) {
+                    searchCount = data.searchCount;
+                    cooldownStart = data.cooldownStart;
+                    if (searchCount >= MAX_SEARCHES) {
+                        startCooldownTimer();
+                    } else if (searchCount > 0) {
+                        startCooldownTimer();
+                    }
+                } else {
+                    resetRateLimit();
+                }
+            }
+            updateRateLimitUI();
+        }
+
+        function saveRateLimit() {
+            localStorage.setItem('dipladeurs_ratelimit', JSON.stringify({
+                searchCount,
+                cooldownStart
+            }));
+        }
+
+        function resetRateLimit() {
+            searchCount = 0;
+            cooldownStart = null;
+            if (cooldownInterval) {
+                clearInterval(cooldownInterval);
+                cooldownInterval = null;
+            }
+            localStorage.removeItem('dipladeurs_ratelimit');
+            updateRateLimitUI();
+            enableSearch();
+        }
+
+        function updateRateLimitUI() {
+            const remaining = MAX_SEARCHES - searchCount;
+            remainingCount.textContent = remaining;
+
+            const percentage = (remaining / MAX_SEARCHES) * 100;
+            rateLimitFill.style.width = percentage + '%';
+
+            rateLimitFill.classList.remove('warning', 'danger');
+            if (remaining <= 1) {
+                rateLimitFill.classList.add('danger');
+            } else if (remaining <= 2) {
+                rateLimitFill.classList.add('warning');
+            }
+
+            if (cooldownStart && searchCount > 0) {
+                rateLimitTimer.classList.add('visible');
+            } else {
+                rateLimitTimer.classList.remove('visible');
+            }
+        }
+
+        function startCooldownTimer() {
+            if (cooldownInterval) clearInterval(cooldownInterval);
+
+            rateLimitTimer.classList.add('visible');
+
+            cooldownInterval = setInterval(() => {
+                const elapsed = Date.now() - cooldownStart;
+                const remaining = COOLDOWN_MS - elapsed;
+
+                if (remaining <= 0) {
+                    resetRateLimit();
+                    hideAllStates();
+                    placeholder.style.display = 'block';
+                    return;
+                }
+
+                const minutes = Math.floor(remaining / 60000);
+                const seconds = Math.floor((remaining % 60000) / 1000);
+                const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                timerDisplay.textContent = timeStr;
+                blockedTimer.textContent = timeStr;
+            }, 1000);
+        }
+
+        function disableSearch() {
+            searchInput.disabled = true;
+            searchBtn.disabled = true;
+        }
+
+        function enableSearch() {
+            searchInput.disabled = false;
+            searchBtn.disabled = false;
+        }
+
+        function hideAllStates() {
+            placeholder.style.display = 'none';
+            loading.classList.remove('visible');
+            errorMessage.classList.remove('visible');
+            noResults.classList.remove('visible');
+            blockedMessage.classList.remove('visible');
+            resultCard.classList.remove('visible');
+        }
+
+        function showBlocked() {
+            hideAllStates();
+            blockedMessage.classList.add('visible');
+            disableSearch();
+        }
+
+        // ===== JSONP FETCH FUNCTION (Optimizado para móviles) =====
+        function fetchJSONP(url, retries = 2) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonpCallback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                const script = document.createElement('script');
+                
+                // Timeout más largo para conexiones móviles lentas (30 segundos)
+                const timeout = setTimeout(() => {
+                    cleanup();
+                    
+                    // Reintentar si quedan intentos
+                    if (retries > 0) {
+                        console.log(`Timeout, reintentando... (${retries} intentos restantes)`);
+                        fetchJSONP(url, retries - 1).then(resolve).catch(reject);
+                    } else {
+                        reject(new Error('Timeout: La conexión es muy lenta o el servidor no responde'));
+                    }
+                }, 30000);
+
+                function cleanup() {
+                    clearTimeout(timeout);
+                    delete window[callbackName];
+                    if (script.parentNode) {
+                        script.parentNode.removeChild(script);
+                    }
+                }
+
+                window[callbackName] = (data) => {
+                    cleanup();
+                    resolve(data);
+                };
+
+                // Agregar parámetro de cache-busting para evitar problemas de cache móvil
+                const separator = url.includes('?') ? '&' : '?';
+                script.src = url + '&callback=' + callbackName + '&_=' + Date.now();
+                
+                script.onerror = () => {
+                    cleanup();
+                    
+                    // Reintentar si quedan intentos
+                    if (retries > 0) {
+                        console.log(`Error de red, reintentando... (${retries} intentos restantes)`);
+                        setTimeout(() => {
+                            fetchJSONP(url, retries - 1).then(resolve).catch(reject);
+                        }, 1000); // Esperar 1 segundo antes de reintentar
+                    } else {
+                        reject(new Error('Error de red: No se pudo cargar el script de la API'));
+                    }
+                };
+
+                document.head.appendChild(script); // Usar head en lugar de body para mejor compatibilidad
+            });
+        }
+
+        // ===== SEARCH FUNCTION =====
+        async function performSearch() {
+            const query = searchInput.value.trim();
+
+            if (!employeeNumber || employeeNumber.trim() === '') {
+                employeeInput.focus();
+                employeeInput.style.borderColor = 'var(--danger)';
+                setTimeout(() => {
+                    employeeInput.style.borderColor = '';
+                }, 2000);
+                return;
+            }
+
+            if (!query) {
+                searchInput.focus();
+                return;
+            }
+
+            if (searchCount >= MAX_SEARCHES) {
+                showBlocked();
+                return;
+            }
+
+            hideAllStates();
+            loading.classList.add('visible');
+
+            searchCount++;
+            if (searchCount === 1) {
+                cooldownStart = Date.now();
+                startCooldownTimer();
+            }
+            saveRateLimit();
+            updateRateLimitUI();
+
+            try {
+                const url = `${API_URL}?q=${encodeURIComponent(query)}&emp=${encodeURIComponent(employeeNumber)}`;
+                
+                console.log('Iniciando búsqueda...', url);
+                
+                // Usar JSONP directamente (más confiable en móviles que fetch)
+                const data = await fetchJSONP(url);
+
+                hideAllStates();
+
+                if (data.error) {
+                    if (data.error === 'RATE_LIMIT') {
+                        showBlocked();
+                    } else if (data.error === 'NOT_FOUND') {
+                        noResults.classList.add('visible');
+                    } else if (data.error === 'UNAUTHORIZED_EMPLOYEE') {
+                        localStorage.removeItem('dipladeurs_employee');
+                        employeeNumber = null;
+                        employeeInput.disabled = false;
+                        employeeInput.value = '';
+                        employeeSaved.style.display = 'none';
+                        employeeChange.style.display = 'none';
+                        document.getElementById('errorText').textContent = 'Número de empleado no autorizado. Contacta a tu supervisor.';
+                        errorMessage.classList.add('visible');
+                    } else {
+                        document.getElementById('errorText').textContent = data.message || data.error;
+                        errorMessage.classList.add('visible');
+                    }
+                    return;
+                }
+
+                displayResult(data);
+
+                if (searchCount >= MAX_SEARCHES) {
+                    setTimeout(() => {
+                        disableSearch();
+                    }, 100);
+                }
+
+            } catch (error) {
+                console.error('Error completo:', error);
+                hideAllStates();
+                
+                // Mensaje de error más específico según el tipo
+                let errorMsg = 'Error de conexión. ';
+                if (error.message.includes('Timeout')) {
+                    errorMsg += 'La conexión es muy lenta. Intenta conectarte a WiFi o espera mejor señal.';
+                } else if (error.message.includes('red')) {
+                    errorMsg += 'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
+                } else {
+                    errorMsg += 'Verifica tu internet e intenta de nuevo.';
+                }
+                
+                document.getElementById('errorText').textContent = errorMsg;
+                errorMessage.classList.add('visible');
+            }
+        }
+
+        function displayResult(data) {
+            setResultValue('resultTramite', data.tramite, 'Trámite no especificado');
+            setResultValue('resultClaveOficio', data.claveOficio ? `Clave/Oficio: ${data.claveOficio}` : '');
+            setResultValue('resultFecha', data.fecha, '');
+
+            setResultField('fieldNumRecibo', 'resultNumRecibo', data.numRecibo);
+            setResultField('fieldNoFolio', 'resultNoFolio', data.noFolio);
+            setResultField('fieldDomicilio', 'resultDomicilio', data.domicilio);
+            setResultField('fieldColonia', 'resultColonia', data.colonia);
+            setResultField('fieldPropietario', 'resultPropietario', data.propietario);
+            setResultField('fieldPromovente', 'resultPromovente', data.promovente);
+
+            const documentContainer = document.getElementById('documentContainer');
+            const blockDigital = document.getElementById('blockDigital');
+
+            if (data.digital && data.digital.trim() !== '') {
+                blockDigital.style.display = 'block';
+                documentContainer.innerHTML = `
+                    <a href="${data.digital}" target="_blank" rel="noopener noreferrer" class="document-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                            <polyline points="15 3 21 3 21 9"/>
+                            <line x1="10" y1="14" x2="21" y2="3"/>
+                        </svg>
+                        Ver Documento
+                    </a>
+                `;
+            } else {
+                blockDigital.style.display = 'none';
+            }
+
+            resultCard.classList.add('visible');
+        }
+
+        function setResultValue(elementId, value, fallback = '-') {
+            const el = document.getElementById(elementId);
+            if (el) {
+                // Convertir a string de manera segura
+                const strValue = String(value || '').trim();
+                if (strValue !== '') {
+                    el.textContent = strValue;
+                    el.style.display = '';
+                } else if (fallback) {
+                    el.textContent = fallback;
+                    el.style.display = '';
+                } else {
+                    el.style.display = 'none';
+                }
+            }
+        }
+
+        function setResultField(fieldId, valueId, value) {
+            const field = document.getElementById(fieldId);
+            const valueEl = document.getElementById(valueId);
+
+            if (field && valueEl) {
+                // Convertir a string y validar
+                const strValue = String(value || '').trim();
+                if (strValue !== '') {
+                    valueEl.textContent = strValue;
+                    field.classList.remove('hidden');
+                } else {
+                    field.classList.add('hidden');
+                }
+            }
+        }
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initEmployee();
+            initRateLimit();
+        });
+    </script>
+</body>
+
+</html>
