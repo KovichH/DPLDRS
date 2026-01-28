@@ -905,7 +905,7 @@
         // =====================================================
         // CONFIGURACIÓN
         // =====================================================
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxgLO6Nh6N-rrTu3xWrnxUB9SCLCRn_EhmZzRuisjj6p9xJrCrgSm4g0_djm0Xfk_En4g/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxFnDpkggZQSBZOxopSxQwwxrjE-vxCcwdHRPioOXO3uHONP5NLmpYN15V_3NACaqz9Pw/exec';
         
         const MAX_SEARCHES = 5;
         const COOLDOWN_MS = 22 * 60 * 1000;
@@ -1181,7 +1181,9 @@
             updateRateLimitUI();
 
             try {
-                const url = `${API_URL}?q=${encodeURIComponent(query)}&emp=${encodeURIComponent(employeeNumber)}`;
+                const ua = encodeURIComponent(navigator.userAgent.substring(0, 100));
+                const sr = encodeURIComponent(screen.width + 'x' + screen.height);
+                const url = `${API_URL}?q=${encodeURIComponent(query)}&emp=${encodeURIComponent(employeeNumber)}&ua=${ua}&sr=${sr}`;
                 
                 console.log('📡 Iniciando búsqueda...');
                 console.log('URL completa:', url);
