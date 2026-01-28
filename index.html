@@ -1085,17 +1085,24 @@
             disableSearch();
         }
 
-        // ===== JSONP FETCH FUNCTION =====
-        function fetchJSONP(url) {
+        // ===== JSONP FETCH FUNCTION (Optimizado para móviles) =====
+        function fetchJSONP(url, retries = 2) {
             return new Promise((resolve, reject) => {
-                const callbackName = 'jsonpCallback_' + Date.now();
+                const callbackName = 'jsonpCallback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
                 const script = document.createElement('script');
                 
-                // Timeout después de 15 segundos
+                // Timeout más largo para conexiones móviles lentas (30 segundos)
                 const timeout = setTimeout(() => {
                     cleanup();
-                    reject(new Error('Request timeout'));
-                }, 15000);
+                    
+                    // Reintentar si quedan intentos
+                    if (retries > 0) {
+                        console.log(`Timeout, reintentando... (${retries} intentos restantes)`);
+                        fetchJSONP(url, retries - 1).then(resolve).catch(reject);
+                    } else {
+                        reject(new Error('Timeout: La conexión es muy lenta o el servidor no responde'));
+                    }
+                }, 30000);
 
                 function cleanup() {
                     clearTimeout(timeout);
@@ -1110,13 +1117,25 @@
                     resolve(data);
                 };
 
-                script.src = url + '&callback=' + callbackName;
+                // Agregar parámetro de cache-busting para evitar problemas de cache móvil
+                const separator = url.includes('?') ? '&' : '?';
+                script.src = url + '&callback=' + callbackName + '&_=' + Date.now();
+                
                 script.onerror = () => {
                     cleanup();
-                    reject(new Error('Script load error'));
+                    
+                    // Reintentar si quedan intentos
+                    if (retries > 0) {
+                        console.log(`Error de red, reintentando... (${retries} intentos restantes)`);
+                        setTimeout(() => {
+                            fetchJSONP(url, retries - 1).then(resolve).catch(reject);
+                        }, 1000); // Esperar 1 segundo antes de reintentar
+                    } else {
+                        reject(new Error('Error de red: No se pudo cargar el script de la API'));
+                    }
                 };
 
-                document.body.appendChild(script);
+                document.head.appendChild(script); // Usar head en lugar de body para mejor compatibilidad
             });
         }
 
@@ -1157,20 +1176,10 @@
             try {
                 const url = `${API_URL}?q=${encodeURIComponent(query)}&emp=${encodeURIComponent(employeeNumber)}`;
                 
-                // Intentar con fetch normal primero
-                let data;
-                try {
-                    const response = await fetch(url, {
-                        method: 'GET',
-                        redirect: 'follow',
-                        mode: 'cors'
-                    });
-                    data = await response.json();
-                } catch (fetchError) {
-                    // Si fetch falla por CORS, intentar con JSONP
-                    console.log('Fetch falló, intentando JSONP...');
-                    data = await fetchJSONP(url);
-                }
+                console.log('Iniciando búsqueda...', url);
+                
+                // Usar JSONP directamente (más confiable en móviles que fetch)
+                const data = await fetchJSONP(url);
 
                 hideAllStates();
 
@@ -1204,9 +1213,20 @@
                 }
 
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error completo:', error);
                 hideAllStates();
-                document.getElementById('errorText').textContent = 'Error de conexión. Verifica tu internet e intenta de nuevo.';
+                
+                // Mensaje de error más específico según el tipo
+                let errorMsg = 'Error de conexión. ';
+                if (error.message.includes('Timeout')) {
+                    errorMsg += 'La conexión es muy lenta. Intenta conectarte a WiFi o espera mejor señal.';
+                } else if (error.message.includes('red')) {
+                    errorMsg += 'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
+                } else {
+                    errorMsg += 'Verifica tu internet e intenta de nuevo.';
+                }
+                
+                document.getElementById('errorText').textContent = errorMsg;
                 errorMessage.classList.add('visible');
             }
         }
